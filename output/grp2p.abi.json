@@ -1,0 +1,61 @@
+{
+    "buildInfo": {
+        "rustc": {
+            "version": "1.59.0-nightly",
+            "commitHash": "78fd0f633faaa5b6dd254fc1456735f63a1b1238",
+            "commitDate": "2021-12-29",
+            "channel": "Nightly",
+            "short": "rustc 1.59.0-nightly (78fd0f633 2021-12-29)"
+        },
+        "contractCrate": {
+            "name": "grp2p",
+            "version": "0.0.1"
+        },
+        "framework": {
+            "name": "elrond-wasm",
+            "version": "0.25.0"
+        }
+    },
+    "docs": [
+        "One of the simplest smart contracts possible,",
+        "it holds a single variable in storage, which anyone can increment."
+    ],
+    "name": "Grp2p",
+    "constructor": {
+        "inputs": [
+            {
+                "name": "initial_value",
+                "type": "BigInt"
+            }
+        ],
+        "outputs": []
+    },
+    "endpoints": [
+        {
+            "name": "getSum",
+            "mutability": "readonly",
+            "inputs": [],
+            "outputs": [
+                {
+                    "type": "BigInt"
+                }
+            ]
+        },
+        {
+            "docs": [
+                "Add desired amount to the storage variable."
+            ],
+            "name": "add",
+            "mutability": "mutable",
+            "inputs": [
+                {
+                    "name": "value",
+                    "type": "BigInt"
+                }
+            ],
+            "outputs": []
+        }
+    ],
+    "hasCallback": false,
+    "types": {}
+}
