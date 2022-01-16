@@ -6,20 +6,31 @@ elrond_wasm::imports!();
 /// it holds a single variable in storage, which anyone can increment.
 #[elrond_wasm::derive::contract]
 pub trait Grp2p {
-    #[view(getSum)]
-    #[storage_mapper("sum")]
-    fn sum(&self) -> SingleValueMapper<BigInt>;
 
     #[init]
-    fn init(&self, initial_value: BigInt) {
-        self.sum().set(&initial_value);
+    fn init(&self){
+
+        // Start by storing the owner's address
+        let my_address: ManagedAddress = self.blockchain().get_caller();
+        self.set_owner(&my_address);
+
+        // Initialize the order-id counter
+        let counter = BigUint::zero();
+        self.id().set(&counter);
     }
 
-    /// Add desired amount to the storage variable.
-    #[endpoint]
-    fn add(&self, value: BigInt) -> SCResult<()> {
-        self.sum().update(|sum| *sum += value);
+    // -------------------------- Utils -------------------------- 
 
-        Ok(())
-    }
+    fn add(&self, value : &u32){ self.id().update(|id| (*id) += *value ); }
+
+    // ------------------------- Storage ------------------------- 
+
+    #[storage_mapper("id")]
+    fn id(&self) -> SingleValueMapper<BigUint>;
+
+    #[storage_set("owner")]
+    fn set_owner(&self, address: &ManagedAddress);
+
+    #[storage_get("owner")]
+    fn get_owner(&self) -> ManagedAddress;
 }
