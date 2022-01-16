@@ -3,47 +3,14 @@
     "gasSchedule":"v4",
     "steps":[
         {
-            "step":"setState",
-            "accounts":{
-                "address:owner":{
-                    "nonce":"1",
-                    "balance":"0"
-                }
-            },
-            "newAddresses":[
-                {
-                    "creatorAddress":"address:owner",
-                    "creatorNonce":"1",
-                    "newAddress":"sc:grp2p"
-                }
-            ]
-        },
-        {
-            "step":"scDeploy",
-            "txId":"1",
-            "tx":{
-                "from":"address:owner",
-                "contractCode":"file:../output/grp2p.wasm",
-                "gasLimit":"5,000,000",
-                "gasPrice":"0"
-            },
-            "expect":{
-                "out":[
-                    
-                ],
-                "status":"",
-                "logs":[
-                    
-                ],
-                "gas":"*",
-                "refund":"*"
-            }
+            "step":"externalSteps",
+            "path":"/externalSteps/init_deploy.json"
         },
         {
             "step":"checkState",
             "accounts":{
                 "address:owner":{
-                    "nonce":"*",
+                    "nonce":"1",
                     "balance":"0",
                     "storage":{
                         
@@ -55,7 +22,7 @@
                     "balance":"0",
                     "storage":{
                         "str:id":"0",
-                        "''owner":"address:owner"
+                        "+" : ""
                     },
                     "code":"file:../output/grp2p.wasm"
                 }
