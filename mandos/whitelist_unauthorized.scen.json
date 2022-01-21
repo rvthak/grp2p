@@ -1,0 +1,107 @@
+{
+    "name":"whitelist unauthorized user",
+    "gasSchedule":"v4",
+    "steps":[
+        {
+            "step":"externalSteps",
+            "path":"/externalSteps/init_deploy.json"
+        },
+        {
+            "step": "scCall",
+            "txId": "1-get-whitelist",
+            "tx": {
+                "from": "address:user1",
+                "to": "sc:grp2p",
+                "function": "get_whitelisted",
+                "arguments": [],
+                "gasLimit": "20,000,000",
+                "gasPrice": "0"
+            },
+            "expect": {
+                "out": ["nested:str:WEGLD-abcdef|nested:str:LPTOK-abcdef"],
+                "status": "",
+                "logs": [],
+                "gas": "*",
+                "refund": "*"
+            }
+        },
+        {
+            "step": "scCall",
+            "txId": "2-add-token",
+            "tx": {
+                "from": "address:user1",
+                "to": "sc:grp2p",
+                "function": "add_token",
+                "arguments": [ "str:MEGLD-abcdef" ],
+                "gasLimit": "20,000,000",
+                "gasPrice": "0"
+            },
+            "expect": {
+                "out": [],
+                "status": "4",
+                "message": "str:Permission denied",
+                "logs": [],
+                "gas": "*",
+                "refund": "*"
+            }
+        },
+        {
+            "step": "scCall",
+            "txId": "3-ensure-not-added",
+            "tx": {
+                "from": "address:user1",
+                "to": "sc:grp2p",
+                "function": "get_whitelisted",
+                "arguments": [],
+                "gasLimit": "20,000,000",
+                "gasPrice": "0"
+            },
+            "expect": {
+                "out": ["nested:str:WEGLD-abcdef|nested:str:LPTOK-abcdef"],
+                "status": "",
+                "logs": [],
+                "gas": "*",
+                "refund": "*"
+            }
+        },
+        {
+            "step": "scCall",
+            "txId": "4-remove-token",
+            "tx": {
+                "from": "address:user1",
+                "to": "sc:grp2p",
+                "function": "remove_token",
+                "arguments": [ "str:WEGLD-abcdef" ],
+                "gasLimit": "20,000,000",
+                "gasPrice": "0"
+            },
+            "expect": {
+                "out": [],
+                "status": "4",
+                "message": "str:Permission denied",
+                "logs": [],
+                "gas": "*",
+                "refund": "*"
+            }
+        },
+        {
+            "step": "scCall",
+            "txId": "5-ensure-not-removed",
+            "tx": {
+                "from": "address:user1",
+                "to": "sc:grp2p",
+                "function": "get_whitelisted",
+                "arguments": [],
+                "gasLimit": "20,000,000",
+                "gasPrice": "0"
+            },
+            "expect": {
+                "out": ["nested:str:WEGLD-abcdef|nested:str:LPTOK-abcdef"],
+                "status": "",
+                "logs": [],
+                "gas": "*",
+                "refund": "*"
+            }
+        }
+    ]
+}

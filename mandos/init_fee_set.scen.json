@@ -1,5 +1,5 @@
 {
-    "name":"owner init set",
+    "name":"init default fee set",
     "gasSchedule":"v4",
     "steps":[
         {
@@ -13,11 +13,15 @@
                     "nonce":"1",
                     "balance":"0"
                 },
+                "address:user1":{
+                    "nonce":"0",
+                    "balance":"0"
+                },
                 "sc:grp2p":{
                     "nonce":"0",
                     "balance":"0",
                     "storage":{
-                        "str:owner":"address:owner",
+                        "str:fee":"10",
                         "+" : ""
                     },
                     "code":"file:../output/grp2p.wasm"

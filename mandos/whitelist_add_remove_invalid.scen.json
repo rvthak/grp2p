@@ -1,0 +1,106 @@
+{
+    "name":"whitelist add-remove",
+    "gasSchedule":"v4",
+    "steps":[
+        {
+            "step":"externalSteps",
+            "path":"/externalSteps/init_deploy.json"
+        },
+        {
+            "step": "scCall",
+            "txId": "1-get-whitelist",
+            "tx": {
+                "from": "address:owner",
+                "to": "sc:grp2p",
+                "function": "get_whitelisted",
+                "arguments": [],
+                "gasLimit": "20,000,000",
+                "gasPrice": "0"
+            },
+            "expect": {
+                "out": ["nested:str:WEGLD-abcdef|nested:str:LPTOK-abcdef"],
+                "status": "",
+                "logs": [],
+                "gas": "*",
+                "refund": "*"
+            }
+        },
+        {
+            "step": "scCall",
+            "txId": "2-add-token",
+            "tx": {
+                "from": "address:owner",
+                "to": "sc:grp2p",
+                "function": "add_token",
+                "arguments": [ "str:GLD" ],
+                "gasLimit": "20,000,000",
+                "gasPrice": "0"
+            },
+            "expect": {
+                "out": [],
+                "status": "4",
+                "message" : "str:Invalid token given",
+                "logs": [],
+                "gas": "*",
+                "refund": "*"
+            }
+        },
+        {
+            "step": "scCall",
+            "txId": "3-check-if-added",
+            "tx": {
+                "from": "address:owner",
+                "to": "sc:grp2p",
+                "function": "get_whitelisted",
+                "arguments": [],
+                "gasLimit": "20,000,000",
+                "gasPrice": "0"
+            },
+            "expect": {
+                "out": ["nested:str:WEGLD-abcdef|nested:str:LPTOK-abcdef"],
+                "status": "",
+                "logs": [],
+                "gas": "*",
+                "refund": "*"
+            }
+        },
+        {
+            "step": "scCall",
+            "txId": "4-remove-token",
+            "tx": {
+                "from": "address:owner",
+                "to": "sc:grp2p",
+                "function": "remove_token",
+                "arguments": [ "str:GLD" ],
+                "gasLimit": "20,000,000",
+                "gasPrice": "0"
+            },
+            "expect": {
+                "out": [],
+                "status": "",
+                "logs": [],
+                "gas": "*",
+                "refund": "*"
+            }
+        },
+        {
+            "step": "scCall",
+            "txId": "5-check-if-removed",
+            "tx": {
+                "from": "address:owner",
+                "to": "sc:grp2p",
+                "function": "get_whitelisted",
+                "arguments": [],
+                "gasLimit": "20,000,000",
+                "gasPrice": "0"
+            },
+            "expect": {
+                "out": ["nested:str:WEGLD-abcdef|nested:str:LPTOK-abcdef"],
+                "status": "",
+                "logs": [],
+                "gas": "*",
+                "refund": "*"
+            }
+        }
+    ]
+}

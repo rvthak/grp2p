@@ -1,0 +1,88 @@
+{
+    "name":"whitelist unauthorized user",
+    "gasSchedule":"v4",
+    "steps":[
+        {
+            "step":"externalSteps",
+            "path":"/externalSteps/init_deploy.json"
+        },
+        {
+            "step": "scCall",
+            "txId": "1-check-existing",
+            "tx": {
+                "from": "address:user1",
+                "to": "sc:grp2p",
+                "function": "is_whitelisted",
+                "arguments": [ "str:WEGLD-abcdef"],
+                "gasLimit": "20,000,000",
+                "gasPrice": "0"
+            },
+            "expect": {
+                "out": [ ],
+                "status": "",
+                "logs": [],
+                "gas": "*",
+                "refund": "*"
+            }
+        },
+        {
+            "step": "scCall",
+            "txId": "2-check-non-existing",
+            "tx": {
+                "from": "address:user1",
+                "to": "sc:grp2p",
+                "function": "is_whitelisted",
+                "arguments": [ "str:MEGLD-abcdef"],
+                "gasLimit": "20,000,000",
+                "gasPrice": "0"
+            },
+            "expect": {
+                "out": [ ],
+                "status": "4",
+                "message": "str:Token not whitelisted",
+                "logs": [],
+                "gas": "*",
+                "refund": "*"
+            }
+        },
+        {
+            "step": "scCall",
+            "txId": "3-check-existing-owner",
+            "tx": {
+                "from": "address:owner",
+                "to": "sc:grp2p",
+                "function": "is_whitelisted",
+                "arguments": [ "str:WEGLD-abcdef"],
+                "gasLimit": "20,000,000",
+                "gasPrice": "0"
+            },
+            "expect": {
+                "out": [ ],
+                "status": "",
+                "logs": [],
+                "gas": "*",
+                "refund": "*"
+            }
+        },
+        {
+            "step": "scCall",
+            "txId": "4-check-non-existing-owner",
+            "tx": {
+                "from": "address:owner",
+                "to": "sc:grp2p",
+                "function": "is_whitelisted",
+                "arguments": [ "str:MEGLD-abcdef"],
+                "gasLimit": "20,000,000",
+                "gasPrice": "0"
+            },
+            "expect": {
+                "out": [ ],
+                "status": "4",
+                "message": "str:Token not whitelisted",
+                "logs": [],
+                "gas": "*",
+                "refund": "*"
+            }
+        }
+    ]
+}

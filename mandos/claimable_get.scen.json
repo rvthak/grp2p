@@ -1,0 +1,87 @@
+{
+    "name":"whitelist add-remove",
+    "gasSchedule":"v4",
+    "steps":[
+        {
+            "step":"externalSteps",
+            "path":"/externalSteps/init_deploy.json"
+        },
+        {
+            "step": "scCall",
+            "txId": "1-get-1st-claimable-owner",
+            "tx": {
+                "from": "address:owner",
+                "to": "sc:grp2p",
+                "function": "available_fees",
+                "arguments": [ "str:WEGLD-abcdef" ],
+                "gasLimit": "20,000,000",
+                "gasPrice": "0"
+            },
+            "expect": {
+                "out": ["0"],
+                "status": "",
+                "logs": [],
+                "gas": "*",
+                "refund": "*"
+            }
+        },
+        {
+            "step": "scCall",
+            "txId": "2-get-2nd-claimable-owner",
+            "tx": {
+                "from": "address:owner",
+                "to": "sc:grp2p",
+                "function": "available_fees",
+                "arguments": [ "str:LPTOK-abcdef" ],
+                "gasLimit": "20,000,000",
+                "gasPrice": "0"
+            },
+            "expect": {
+                "out": ["0"],
+                "status": "",
+                "logs": [],
+                "gas": "*",
+                "refund": "*"
+            }
+        },
+        {
+            "step": "scCall",
+            "txId": "3-get-claimable-not-existing",
+            "tx": {
+                "from": "address:owner",
+                "to": "sc:grp2p",
+                "function": "available_fees",
+                "arguments": [ "str:MEGLD-abcdef" ],
+                "gasLimit": "20,000,000",
+                "gasPrice": "0"
+            },
+            "expect": {
+                "out": ["0"],
+                "status": "",
+                "logs": [],
+                "gas": "*",
+                "refund": "*"
+            }
+        },
+        {
+            "step": "scCall",
+            "txId": "4-get-claimable-user",
+            "tx": {
+                "from": "address:user1",
+                "to": "sc:grp2p",
+                "function": "available_fees",
+                "arguments": [ "str:MEGLD-abcdef" ],
+                "gasLimit": "20,000,000",
+                "gasPrice": "0"
+            },
+            "expect": {
+                "out": [],
+                "status": "4",
+                "message":"str:Permission denied",
+                "logs": [],
+                "gas": "*",
+                "refund": "*"
+            }
+        }
+    ]
+}

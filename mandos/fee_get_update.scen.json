@@ -1,0 +1,106 @@
+{
+    "name":"fee get and update",
+    "gasSchedule":"v4",
+    "steps":[
+        {
+            "step":"externalSteps",
+            "path":"/externalSteps/init_deploy.json"
+        },
+        {
+            "step": "scCall",
+            "txId": "1-get-fee",
+            "tx": {
+                "from": "address:user1",
+                "to": "sc:grp2p",
+                "function": "get_fee",
+                "arguments": [],
+                "gasLimit": "20,000,000",
+                "gasPrice": "0"
+            },
+            "expect": {
+                "out": ["10"],
+                "status": "",
+                "logs": [],
+                "gas": "*",
+                "refund": "*"
+            }
+        },
+        {
+            "step": "scCall",
+            "txId": "2-update-fee-unauth",
+            "tx": {
+                "from": "address:user1",
+                "to": "sc:grp2p",
+                "function": "update_fee",
+                "arguments": [ "69" ],
+                "gasLimit": "20,000,000",
+                "gasPrice": "0"
+            },
+            "expect": {
+                "out": [],
+                "status": "4",
+                "message": "str:Permission denied",
+                "logs": [],
+                "gas": "*",
+                "refund": "*"
+            }
+        },
+        {
+            "step": "scCall",
+            "txId": "3-ensure-unchanged",
+            "tx": {
+                "from": "address:owner",
+                "to": "sc:grp2p",
+                "function": "get_fee",
+                "arguments": [],
+                "gasLimit": "20,000,000",
+                "gasPrice": "0"
+            },
+            "expect": {
+                "out": ["10"],
+                "status": "",
+                "logs": [],
+                "gas": "*",
+                "refund": "*"
+            }
+        },
+        {
+            "step": "scCall",
+            "txId": "4-update-fee-owner",
+            "tx": {
+                "from": "address:owner",
+                "to": "sc:grp2p",
+                "function": "update_fee",
+                "arguments": ["164"],
+                "gasLimit": "20,000,000",
+                "gasPrice": "0"
+            },
+            "expect": {
+                "out": [],
+                "status": "",
+                "logs": [],
+                "gas": "*",
+                "refund": "*"
+            }
+        },
+        {
+            "step": "scCall",
+            "txId": "5-ensure-updated",
+            "tx": {
+                "from": "address:owner",
+                "to": "sc:grp2p",
+                "function": "get_fee",
+                "arguments": [],
+                "gasLimit": "20,000,000",
+                "gasPrice": "0"
+            },
+            "expect": {
+                "out": ["164"],
+                "status": "",
+                "logs": [],
+                "gas": "*",
+                "refund": "*"
+            }
+        }
+    ]
+}

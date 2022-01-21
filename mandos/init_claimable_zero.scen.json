@@ -1,5 +1,5 @@
 {
-    "name":"init order counter-id to zero",
+    "name":"init claimable token zero",
     "gasSchedule":"v4",
     "steps":[
         {
@@ -21,7 +21,8 @@
                     "nonce":"0",
                     "balance":"0",
                     "storage":{
-                        "str:id":"0",
+                        "str:claimable|nested:str:WEGLD-abcdef" : "0",
+                        "str:claimable|nested:str:LPTOK-abcdef" : "0",
                         "+" : ""
                     },
                     "code":"file:../output/grp2p.wasm"
