@@ -17,6 +17,10 @@
                     "nonce":"0",
                     "balance":"0"
                 },
+                "address:user2":{
+                    "nonce":"0",
+                    "balance":"0"
+                },
                 "sc:grp2p":{
                     "nonce":"0",
                     "balance":"0",

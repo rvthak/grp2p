@@ -11,6 +11,10 @@
                 "address:user1": {
                     "nonce": "0",
                     "balance": "0"
+                },
+                "address:user2": {
+                    "nonce": "0",
+                    "balance": "0"
                 }
             },
             "newAddresses":[
