@@ -18,9 +18,9 @@ pub trait Grp2p {
         token1: TokenIdentifier,
         token2: TokenIdentifier,
     ) -> SCResult<()> {
+
         // Initialize the order-id counter
-        let counter = BigUint::zero();
-        self.id().set(&counter);
+        self.id().set(&BigUint::zero());
 
         // Ensure that the given tokens are valid
         require!( token1.is_valid_esdt_identifier() && token2.is_valid_esdt_identifier(), "Invalid token given");
@@ -54,10 +54,14 @@ pub trait Grp2p {
         self.is_whitelisted(&provided_token)?;
         self.is_whitelisted(&requested_token)?;
 
-        // Get a storage ID and increment the ID counter
-        let new_id = self.id().get();
-        self.increment();
+        // Ensure that the tokens are not the same
+        require!(provided_token != requested_token, "Same token provided and requested");
 
+        // Increment the order id counter and get an id 
+        self.increment();
+        let new_id = self.id().get();
+
+        let order_id = new_id.clone();
         let id_c1 = new_id.clone();
         let id_c2 = new_id.clone();
         let id_c3 = new_id.clone();
@@ -74,6 +78,7 @@ pub trait Grp2p {
 
         // Store the newly created order
         let order = SwapOrder {
+            order_id,
             maker,
             provided_token,
             requested_token,
@@ -95,12 +100,12 @@ pub trait Grp2p {
     ) -> SCResult<()> {
 
         // Check if there is an order with the given id stored
-        require!( !self.orders(&order_id).is_empty(), "Order not found: Invalid id" );
+        require!( !self.orders(&order_id).is_empty(), "Invalid order id" );
 
         let order = self.orders(&order_id).get();
 
         // Ensure caller is the order maker
-        require!( self.blockchain().get_caller() == order.maker , "Permission denied: Not order creator" );
+        require!( self.blockchain().get_caller() == order.maker , "Permission denied" );
 
         // Return the funds
         self.send().direct(
@@ -127,13 +132,13 @@ pub trait Grp2p {
     #[payable("*")]
     fn swap(
         &self,
-        order_id: BigUint,
         #[payment_token] provided_token: TokenIdentifier,
         #[payment] provided_amount: BigUint,
+        order_id: BigUint,
     ) -> SCResult<()> {
 
-         // Check if there is an order with the given id stored
-        require!( !self.orders(&order_id).is_empty(), "Order not found: Invalid id" );
+        // Check if there is an order with the given id stored
+        require!( !self.orders(&order_id).is_empty(), "Invalid order id" );
 
         let order = self.orders(&order_id).get();
         let maker = &order.maker;
@@ -143,10 +148,7 @@ pub trait Grp2p {
         require!( taker != *maker, "Invalid caller: maker" );
 
         // Ensure that the payment is correct
-        if( order.requested_token != provided_token || order.requested_amount != provided_amount ){
-            self.return_funds(&taker, &provided_token, &provided_amount);
-            require!(false, "Swap Failed: Wrong token/amount provided : Returning funds")
-        }
+        require!(order.requested_token == provided_token && order.requested_amount == provided_amount, "Swap Failed: Wrong token/amount provided");
 
         // Receive a small fee from both token amounts
         let prov_fee = self.calculate_fee_amount(&order.provided_amount);
@@ -352,17 +354,6 @@ pub trait Grp2p {
     fn calculate_fee_amount(&self, amount: &BigUint) -> BigUint {
         let fee_per = self.fee().get();
         return amount.mul(fee_per) / PERCENT_BASE_POINTS;
-    }
-
-    // Returns the user funds in case of swap error
-    fn return_funds(&self, user:&ManagedAddress, token:&TokenIdentifier, amount:&BigUint) {
-        self.send().direct(
-            user,
-            token,
-            0,
-            amount,
-            b"Funds retuned",
-        );
     }
 
     // Add the given value to the stored id value
