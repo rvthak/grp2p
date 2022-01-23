@@ -1,0 +1,184 @@
+{
+    "name":"Cancel order",
+    "gasSchedule":"v4",
+    "steps":[
+        {
+            "step":"externalSteps",
+            "path":"create_order.scen.json"
+        },
+
+        {
+            "step": "scCall",
+            "txId": "1-cancel-order",
+            "tx": {
+                "from": "address:creator",
+                "to": "sc:grp2p",
+                "function": "cancel",
+                "arguments": [ "1" ],
+                "gasLimit": "20,000,000",
+                "gasPrice": "0"
+            },
+            "expect": {
+                "out": [],
+                "status": "",
+                "message" : "",
+                "logs": "*",
+                "gas": "*",
+                "refund": "*"
+            }
+        },
+        {
+            "step": "checkState",
+            "accounts": {
+                "address:owner":{
+                    "nonce":"1",
+                    "balance":"0"
+                },
+                "address:user1":{
+                    "nonce":"0",
+                    "balance":"0"
+                },
+                "address:user2":{
+                    "nonce":"0",
+                    "balance":"0"
+                },
+                "address:creator": {
+                    "nonce": "6",
+                    "balance": "0",
+                    "esdt": {
+                        "str:WEGLD-abcdef": "400,000,000,000"
+                    },
+                    "storage": {}
+                },
+                "sc:grp2p": {
+                    "nonce": "0",
+                    "balance": "0",
+                    "esdt": {
+                        "str:WEGLD-abcdef": "0"
+                    },
+                    "storage": {
+                        "str:id" : "1",
+                        "str:orders|biguint:1" : "",
+                        "+" : ""
+                    },
+                    "code": "file:../output/grp2p.wasm"
+                }
+            }
+        },
+        {
+            "step": "scCall",
+            "txId": "2-check-order-list",
+            "tx": {
+                "from": "address:creator",
+                "to": "sc:grp2p",
+                "function": "get_user_orders",
+                "arguments": [],
+                "gasLimit": "20,000,000",
+                "gasPrice": "0"
+            },
+            "expect": {
+                "out": [""],
+                "status": "",
+                "logs": [],
+                "gas": "*",
+                "refund": "*"
+            }
+        },
+        {
+            "step": "scCall",
+            "txId": "3-check-buy-list",
+            "tx": {
+                "from": "address:creator",
+                "to": "sc:grp2p",
+                "function": "get_token_buy_orders",
+                "arguments": [ "str:LPTOK-abcdef" ],
+                "gasLimit": "20,000,000",
+                "gasPrice": "0"
+            },
+            "expect": {
+                "out": [""],
+                "status": "",
+                "logs": [],
+                "gas": "*",
+                "refund": "*"
+            }
+        },
+        {
+            "step": "scCall",
+            "txId": "4-check-sell-list",
+            "tx": {
+                "from": "address:creator",
+                "to": "sc:grp2p",
+                "function": "get_token_sell_orders",
+                "arguments": [ "str:WEGLD-abcdef" ],
+                "gasLimit": "20,000,000",
+                "gasPrice": "0"
+            },
+            "expect": {
+                "out": [""],
+                "status": "",
+                "logs": [],
+                "gas": "*",
+                "refund": "*"
+            }
+        },
+        {
+            "step": "scCall",
+            "txId": "5-try-to-cancel-again",
+            "tx": {
+                "from": "address:creator",
+                "to": "sc:grp2p",
+                "function": "cancel",
+                "arguments": [ "1" ],
+                "gasLimit": "20,000,000",
+                "gasPrice": "0"
+            },
+            "expect": {
+                "out": [],
+                "status": "4",
+                "message" : "str:Invalid order id",
+                "logs": "*",
+                "gas": "*",
+                "refund": "*"
+            }
+        },
+        {
+            "step": "checkState",
+            "accounts": {
+                "address:owner":{
+                    "nonce":"1",
+                    "balance":"0"
+                },
+                "address:user1":{
+                    "nonce":"0",
+                    "balance":"0"
+                },
+                "address:user2":{
+                    "nonce":"0",
+                    "balance":"0"
+                },
+                "address:creator": {
+                    "nonce": "10",
+                    "balance": "0",
+                    "esdt": {
+                        "str:WEGLD-abcdef": "400,000,000,000"
+                    },
+                    "storage": {}
+                },
+                "sc:grp2p": {
+                    "nonce": "0",
+                    "balance": "0",
+                    "esdt": {
+                        "str:WEGLD-abcdef": "0"
+                    },
+                    "storage": {
+                        "str:id" : "1",
+                        "str:orders|biguint:1" : "",
+                        "+" : ""
+                    },
+                    "code": "file:../output/grp2p.wasm"
+                }
+            }
+        }
+    ]
+}
