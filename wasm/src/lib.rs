@@ -7,7 +7,7 @@
 elrond_wasm_node::wasm_endpoints! {
     grp2p
     (
-        init
+    	init
         add_token
         remove_token
         is_whitelisted
@@ -19,6 +19,9 @@ elrond_wasm_node::wasm_endpoints! {
         cancel
         swap
         claim_fees
+        get_user_orders
+        get_token_buy_orders
+        get_token_sell_orders
     )
 }
 
