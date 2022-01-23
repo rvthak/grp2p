@@ -1,0 +1,174 @@
+{
+    "name":"Create order",
+    "gasSchedule":"v4",
+    "steps":[
+        {
+            "step":"externalSteps",
+            "path":"/externalSteps/init_deploy.json"
+        },
+        {
+            "step": "setState",
+            "accounts": {
+                "address:creator": {
+                    "nonce": "0",
+                    "balance": "0",
+                    "esdt": {
+                        "str:WEGLD-abcdef": "400,000,000,000"
+                    }
+                }
+            }
+        },
+
+        {
+            "step": "scCall",
+            "txId": "0-ensure-order-list-empty",
+            "tx": {
+                "from": "address:creator",
+                "to": "sc:grp2p",
+                "function": "get_user_orders",
+                "arguments": [],
+                "gasLimit": "20,000,000",
+                "gasPrice": "0"
+            },
+            "expect": {
+                "out": [""],
+                "status": "",
+                "logs": [],
+                "gas": "*",
+                "refund": "*"
+            }
+        },
+
+        {
+            "step": "scCall",
+            "txId": "1-create-order",
+            "tx": {
+                "from": "address:creator",
+                "to": "sc:grp2p",
+                "esdtValue": [
+                    {
+                        "tokenIdentifier": "str:WEGLD-abcdef",
+                        "value": "250,000,000,000"
+                    }
+                ],
+                "function": "create",
+                "arguments": [
+                    "str:LPTOK-abcdef",
+                    "400,000,000,000"
+                ],
+                "gasLimit": "20,000,000",
+                "gasPrice": "0"
+            },
+            "expect": {
+                "out": [],
+                "status": "",
+                "message" : "",
+                "logs": [],
+                "gas": "*",
+                "refund": "*"
+            }
+        },
+        {
+            "step": "checkState",
+            "accounts": {
+                "address:owner":{
+                    "nonce":"1",
+                    "balance":"0"
+                },
+                "address:user1":{
+                    "nonce":"0",
+                    "balance":"0"
+                },
+                "address:user2":{
+                    "nonce":"0",
+                    "balance":"0"
+                },
+                "address:creator": {
+                    "nonce": "2",
+                    "balance": "0",
+                    "esdt": {
+                        "str:WEGLD-abcdef": "150,000,000,000"
+                    },
+                    "storage": {}
+                },
+                "sc:grp2p": {
+                    "nonce": "0",
+                    "balance": "0",
+                    "esdt": {
+                        "str:WEGLD-abcdef": "250,000,000,000"
+                    },
+                    "storage": {
+                        "str:id" : "1",
+                        "str:orders|biguint:1" : {
+                            "0-order_id": "biguint:1",
+                            "1-maker": "address:creator",
+                            "2-provided_token": "nested:str:WEGLD-abcdef",
+                            "3-requested_token": "nested:str:LPTOK-abcdef",
+                            "4-provided_amount": "biguint:250,000,000,000",
+                            "5-requested_amount": "biguint:400,000,000,000"
+                        },
+                        "+" : ""
+                    },
+                    "code": "file:../output/grp2p.wasm"
+                }
+            }
+        },
+        {
+            "step": "scCall",
+            "txId": "2-check-order-list",
+            "tx": {
+                "from": "address:creator",
+                "to": "sc:grp2p",
+                "function": "get_user_orders",
+                "arguments": [],
+                "gasLimit": "20,000,000",
+                "gasPrice": "0"
+            },
+            "expect": {
+                "out": ["biguint:1|address:creator|nested:str:WEGLD-abcdef|nested:str:LPTOK-abcdef|biguint:250,000,000,000|biguint:400,000,000,000"],
+                "status": "",
+                "logs": [],
+                "gas": "*",
+                "refund": "*"
+            }
+        },
+        {
+            "step": "scCall",
+            "txId": "3-check-buy-list",
+            "tx": {
+                "from": "address:creator",
+                "to": "sc:grp2p",
+                "function": "get_token_buy_orders",
+                "arguments": [ "str:LPTOK-abcdef" ],
+                "gasLimit": "20,000,000",
+                "gasPrice": "0"
+            },
+            "expect": {
+                "out": ["biguint:1|address:creator|nested:str:WEGLD-abcdef|nested:str:LPTOK-abcdef|biguint:250,000,000,000|biguint:400,000,000,000"],
+                "status": "",
+                "logs": [],
+                "gas": "*",
+                "refund": "*"
+            }
+        },
+        {
+            "step": "scCall",
+            "txId": "4-check-sell-list",
+            "tx": {
+                "from": "address:creator",
+                "to": "sc:grp2p",
+                "function": "get_token_sell_orders",
+                "arguments": [ "str:WEGLD-abcdef" ],
+                "gasLimit": "20,000,000",
+                "gasPrice": "0"
+            },
+            "expect": {
+                "out": ["biguint:1|address:creator|nested:str:WEGLD-abcdef|nested:str:LPTOK-abcdef|biguint:250,000,000,000|biguint:400,000,000,000"],
+                "status": "",
+                "logs": [],
+                "gas": "*",
+                "refund": "*"
+            }
+        }
+    ]
+}

@@ -1,0 +1,88 @@
+{
+    "name":"Create order",
+    "gasSchedule":"v4",
+    "steps":[
+        {
+            "step":"externalSteps",
+            "path":"/externalSteps/init_deploy.json"
+        },
+        {
+            "step": "setState",
+            "accounts": {
+                "address:creator": {
+                    "nonce": "0",
+                    "balance": "0",
+                    "esdt": {
+                        "str:WEGLD-abcdef": "400,000,000,000",
+                        "str:TESLA-abcdef": "400,000,000,000"
+                    }
+                }
+            }
+        },
+        {
+            "step": "scCall",
+            "txId": "1-same-token",
+            "tx": {
+                "from": "address:creator",
+                "to": "sc:grp2p",
+                "esdtValue": [
+                    {
+                        "tokenIdentifier": "str:WEGLD-abcdef",
+                        "value": "250,000,000,000"
+                    }
+                ],
+                "function": "create",
+                "arguments": [
+                    "str:WEGLD-abcdef",
+                    "400,000,000,000"
+                ],
+                "gasLimit": "20,000,000",
+                "gasPrice": "0"
+            },
+            "expect": {
+                "out": [],
+                "status": "4",
+                "message" : "str:Same token provided and requested",
+                "logs": [],
+                "gas": "*",
+                "refund": "*"
+            }
+        },
+        {
+            "step": "checkState",
+            "accounts": {
+                "address:owner":{
+                    "nonce":"1",
+                    "balance":"0"
+                },
+                "address:user1":{
+                    "nonce":"0",
+                    "balance":"0"
+                },
+                "address:user2":{
+                    "nonce":"0",
+                    "balance":"0"
+                },
+                "address:creator": {
+                    "nonce": "1",
+                    "balance": "0",
+                    "esdt": {
+                        "str:WEGLD-abcdef": "400,000,000,000",
+                        "str:TESLA-abcdef": "400,000,000,000"
+                    },
+                    "storage": {}
+                },
+                "sc:grp2p": {
+                    "nonce": "0",
+                    "balance": "0",
+                    "storage": {
+                        "str:id" : "0",
+                        "str:orders|biguint:1" : "0",
+                        "+" : ""
+                    },
+                    "code": "file:../output/grp2p.wasm"
+                }
+            }
+        }
+    ]
+}
