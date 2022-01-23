@@ -1,0 +1,165 @@
+{
+    "name":"Create order",
+    "gasSchedule":"v4",
+    "steps":[
+        {
+            "step":"externalSteps",
+            "path":"/externalSteps/init_deploy.json"
+        },
+        {
+            "step": "setState",
+            "accounts": {
+                "address:maker": {
+                    "nonce": "0",
+                    "balance": "0",
+                    "esdt": {
+                        "str:WEGLD-abcdef": "400,000,000,000",
+                        "str:LPTOK-abcdef": "100,000,000,000"
+                    }
+                },
+                "address:taker": {
+                    "nonce": "0",
+                    "balance": "0",
+                    "esdt": {
+                        "str:WEGLD-abcdef": "200,000,000,000",
+                        "str:LPTOK-abcdef": "400,000,000,000"
+                    }
+                }
+            }
+        },
+        {
+            "step": "scCall",
+            "txId": "1-create-order",
+            "tx": {
+                "from": "address:maker",
+                "to": "sc:grp2p",
+                "esdtValue": [
+                    {
+                        "tokenIdentifier": "str:WEGLD-abcdef",
+                        "value": "250,000,000,000"
+                    }
+                ],
+                "function": "create",
+                "arguments": [
+                    "str:LPTOK-abcdef",
+                    "400,000,000,000"
+                ],
+                "gasLimit": "20,000,000",
+                "gasPrice": "0"
+            },
+            "expect": {
+                "out": [],
+                "status": "",
+                "message" : "",
+                "logs": [],
+                "gas": "*",
+                "refund": "*"
+            }
+        },
+        {
+            "step": "scCall",
+            "txId": "2-check-order-list",
+            "tx": {
+                "from": "address:maker",
+                "to": "sc:grp2p",
+                "function": "get_user_orders",
+                "arguments": [],
+                "gasLimit": "20,000,000",
+                "gasPrice": "0"
+            },
+            "expect": {
+                "out": ["biguint:1|address:maker|nested:str:WEGLD-abcdef|nested:str:LPTOK-abcdef|biguint:250,000,000,000|biguint:400,000,000,000"],
+                "status": "",
+                "logs": [],
+                "gas": "*",
+                "refund": "*"
+            }
+        },
+        {
+            "step": "scCall",
+            "txId": "3-swap-order",
+            "tx": {
+                "from": "address:taker",
+                "to": "sc:grp2p",
+
+                "function": "swap",
+                "arguments": ["1"],
+                "gasLimit": "20,000,000",
+                "gasPrice": "0"
+            },
+            "expect": {
+                "out": [],
+                "status": "4",
+                "message" : "str:Swap Failed: Wrong token/amount provided",
+                "logs": "*",
+                "gas": "*",
+                "refund": "*"
+            }
+        },
+        {
+            "step": "scCall",
+            "txId": "4-check-order-list",
+            "tx": {
+                "from": "address:maker",
+                "to": "sc:grp2p",
+                "function": "get_user_orders",
+                "arguments": [],
+                "gasLimit": "20,000,000",
+                "gasPrice": "0"
+            },
+            "expect": {
+                "out": ["biguint:1|address:maker|nested:str:WEGLD-abcdef|nested:str:LPTOK-abcdef|biguint:250,000,000,000|biguint:400,000,000,000"],
+                "status": "",
+                "logs": [],
+                "gas": "*",
+                "refund": "*"
+            }
+        },
+        {
+            "step": "checkState",
+            "accounts": {
+                "address:owner":{
+                    "nonce":"1",
+                    "balance":"0"
+                },
+                "address:user1":{
+                    "nonce":"0",
+                    "balance":"0"
+                },
+                "address:user2":{
+                    "nonce":"0",
+                    "balance":"0"
+                },
+                "address:maker": {
+                    "nonce": "3",
+                    "balance": "0",
+                    "esdt": {
+                        "str:WEGLD-abcdef": "150,000,000,000",
+                        "str:LPTOK-abcdef": "100,000,000,000"
+                    }
+                },
+                "address:taker": {
+                    "nonce": "1",
+                    "balance": "0",
+                    "esdt": {
+                        "str:WEGLD-abcdef": "200,000,000,000",
+                        "str:LPTOK-abcdef": "400,000,000,000"
+                    }
+                },
+                "sc:grp2p": {
+                    "nonce": "0",
+                    "balance": "0",
+                    "esdt": {
+                        "str:WEGLD-abcdef": "250,000,000,000",
+                        "str:LPTOK-abcdef": "0"
+                    },
+                    "storage": {
+                        "str:id" : "1",
+                        "+" : ""
+                    },
+                    "code": "file:../output/grp2p.wasm"
+                }
+            }
+        }
+    ]
+}
